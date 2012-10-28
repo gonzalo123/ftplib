@@ -1,6 +1,7 @@
 {
     "name":"gonzalo123/ftplib",
     "description":"FtpLib helper",
+    "license":"GPL",
     "authors":[
         {
             "name":"Gonzalo Ayuso",
