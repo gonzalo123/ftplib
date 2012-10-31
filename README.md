@@ -1,4 +1,3 @@
-
 ```php
 <?php
 include __DIR__ . "/../vendor/autoload.php";
@@ -22,14 +21,13 @@ echo $file->getName();
 echo $file->getContent();
 $file->delete();
 
-$ftp->mkdir('directory')->putFileFromString('newFile', 'bla, bla')->delete();
+$ftp->mkdir('directory')->chdir('directory')->putFileFromString('newFile', 'bla, bla')->delete();
 $ftp->rmdir('directory');
 
 $ftp->putFileFromString('file1', 'bla, bla, bla');
 $ftp->putFileFromString('file2', 'bla, bla, bla');
 
 $ftp->getFiles(function (File $file) use ($ftp) {
-    die($file->getName());
     switch($file->getName()) {
         case 'file1':
             $file->delete();
