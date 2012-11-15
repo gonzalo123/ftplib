@@ -1,5 +1,4 @@
 <?php
-
 use FtpLib\File,
     FtpLib\Ftp;
 
@@ -11,22 +10,14 @@ class FtpTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->ftp = new Ftp("ftphost", "username", "password");
-        $this->ftp->setFtpWrapper($this->getMockFunctions());
-        $this->ftp->connect();
-        $this->ftp->setPasv();
-    }
 
-    private function getMockFunctions()
-    {
-        $functions = $this->getMock('FtpLib\Functions', array('connect', 'ssl_connect', 'login', 'pasv', 'fput', 'delete', 'mkdir', 'chdir', 'fget', 'rmdir', 'nlist', 'size'));
+        $functions = $this->getMock('FtpLib\Functions', array('connect', 'login', 'pasv', 'fput', 'delete', 'mkdir', 'chdir', 'fget', 'rmdir', 'nlist', 'size'));
         $functions->expects($this->any())->method('connect')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('ssl_connect')->will($this->returnValue(TRUE));
         $functions->expects($this->any())->method('login')->will($this->returnValue(TRUE));
         $functions->expects($this->any())->method('pasv')->will($this->returnValue(TRUE));
         $functions->expects($this->any())->method('fput')->will($this->returnValue(TRUE));
         $functions->expects($this->any())->method('delete')->will($this->returnValue(TRUE));
         $functions->expects($this->any())->method('mkdir')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('chdir')->will($this->returnValue(TRUE));
         $functions->expects($this->any())->method('chdir')->will($this->returnValue(TRUE));
         $functions->expects($this->any())->method('rmdir')->will($this->returnValue(TRUE));
         $functions->expects($this->any())->method('size')->will($this->returnValue(1));
@@ -42,7 +33,9 @@ class FtpTest extends \PHPUnit_Framework_TestCase
             return TRUE;
         }));
 
-        return $functions;
+        $this->ftp->setFtpWrapper($functions);
+        $this->ftp->connect();
+        $this->ftp->setPasv();
     }
 
     public function testPutAFileFromPath()
@@ -105,13 +98,8 @@ class FtpTest extends \PHPUnit_Framework_TestCase
         $files[1]->delete();
     }
 
-    public function testSSlConnection()
+    public function testConnectWithSSL()
     {
-        $ftp = new Ftp("ftphost", "username", "password");
-        $ftp->setFtpWrapper($this->getMockFunctions());
-        $ftp->connectSSL();
-        $file = $ftp->putFileFromPath(__DIR__ . '/fixtures/foo');
-        $this->assertInstanceOf('FtpLib\File', $file);
-        $file->delete();
+        $this->ftp = new Ftp("txindoki", "exp_jlakunza", "expqwemxk23");
     }
 }

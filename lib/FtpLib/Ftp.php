@@ -13,7 +13,7 @@ class Ftp
         $this->host = $host;
         $this->user = $user;
         $this->pass = $pass;
-        $this->ftp  = new Functions;
+        $this->ftp = new Functions;
     }
 
     public function setFtpWrapper($ftp)
@@ -24,9 +24,21 @@ class Ftp
     public function connect()
     {
         $this->conn = $this->ftp->connect($this->host);
+        $this->login();
+        return $this;
+    }
+
+    protected function login()
+    {
         if (!$this->ftp->login($this->conn, $this->user, $this->pass)) {
             throw new Exception("Error connecting to FTP server");
         }
+    }
+
+    public function connectSSL()
+    {
+        $this->conn = $this->ftp->ssl_connect($this->host);
+        $this->login();
         return $this;
     }
 
@@ -51,7 +63,7 @@ class Ftp
     public function putFileFromPath($localPath)
     {
         $remoteFile = basename($localPath);
-        $fp         = fopen($localPath, 'r');
+        $fp = fopen($localPath, 'r');
         if ($this->ftp->fput($this->conn, $remoteFile, $fp, FTP_BINARY)) {
             rewind($fp);
             return new File($this, $remoteFile, stream_get_contents($fp));
