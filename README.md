@@ -40,9 +40,9 @@ $ftp->getFiles(function (File $file) use ($ftp) {
 ```
 
 FTP over ssl is also availabel with Ftp::connectSSL() instead Ftp::connect():
-```
+
+```php
 <?php
 $ftp = new Ftp($host, $user, $pass);
 $ftp->connectSSL();
-
 ```
