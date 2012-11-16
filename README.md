@@ -1,5 +1,6 @@
-```php
 [![Build Status](https://secure.travis-ci.org/gonzalo123/ftplib.png?branch=master)](https://travis-ci.org/gonzalo123/ftplib)
+
+```php
 
 <?php
 include __DIR__ . "/../vendor/autoload.php";
