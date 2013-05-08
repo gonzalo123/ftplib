@@ -219,6 +219,21 @@ class Ftp
     }
 
     /**
+     * Changes to the parent directory
+     *
+     * @return \FtpLib\Ftp
+     * @throws Exception When the change fails
+     */
+    public function up()
+    {
+        if (!$this->ftp->cdup($this->conn)) {
+            throw new Exception("Error changing to the parent directory");
+        }
+
+        return $this;
+    }
+
+    /**
      * Creates a directory on the server
      *
      * @param string $directory
