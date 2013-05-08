@@ -67,6 +67,14 @@ class Ftp
     }
 
     /**
+     * Destructs the object
+     */
+    public function __destruct()
+    {
+        $this->close();
+    }
+
+    /**
      * Configures the FTP functions wrapper
      *
      * @param Functions $ftp
@@ -112,6 +120,17 @@ class Ftp
         $this->login();
 
         return $this;
+    }
+
+    /**
+     * Closes the connection
+     */
+    public function close()
+    {
+        if ($this->conn) {
+            $this->ftp->close($this->conn);
+            $this->conn = null;
+        }
     }
 
     /**
