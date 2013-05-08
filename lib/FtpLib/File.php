@@ -24,7 +24,7 @@ class File
     private $name;
 
     /**
-     * The contents of the file
+     * The content of the file
      *
      * @var string
      */
