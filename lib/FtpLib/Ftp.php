@@ -6,7 +6,7 @@ class Ftp
     private $host;
     private $user;
     private $pass;
-    private $ftp = null;
+    private $ftp;
     private $conn;
 
     public function __construct($host, $user, $pass)
@@ -68,11 +68,11 @@ class Ftp
     public function putFileFromPath($localPath)
     {
         $remoteFile = basename($localPath);
-        $fp = fopen($localPath, 'r');
+        $tempHandle = fopen($localPath, 'r');
 
-        if ($this->ftp->fput($this->conn, $remoteFile, $fp, FTP_BINARY)) {
-            rewind($fp);
-            return new File($this, $remoteFile, stream_get_contents($fp));
+        if ($this->ftp->fput($this->conn, $remoteFile, $tempHandle, FTP_BINARY)) {
+            rewind($tempHandle);
+            return new File($this, $remoteFile, stream_get_contents($tempHandle));
         }
 
         throw new Exception("Error when put the remote file From Path'{$localPath}'");
