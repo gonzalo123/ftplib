@@ -3,13 +3,15 @@ namespace FtpLib;
 
 class File
 {
-    private $name, $content, $ftp;
+    private $name;
+    private $content;
+    private $ftp;
 
     public function __construct($ftp, $name, $content)
     {
-        $this->name    = $name;
+        $this->name = $name;
         $this->content = $content;
-        $this->ftp     = $ftp;
+        $this->ftp = $ftp;
     }
 
     public function getName()

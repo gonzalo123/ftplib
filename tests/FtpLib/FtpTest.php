@@ -1,7 +1,5 @@
 <?php
-
-use FtpLib\File,
-    FtpLib\Ftp;
+namespace FtpLib;
 
 class FtpTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,36 +16,53 @@ class FtpTest extends \PHPUnit_Framework_TestCase
 
     private function getMockFunctions()
     {
-        $functions = $this->getMock('FtpLib\Functions', array('connect', 'ssl_connect', 'login', 'pasv', 'fput', 'delete', 'mkdir', 'chdir', 'fget', 'rmdir', 'nlist', 'size'));
-        $functions->expects($this->any())->method('connect')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('ssl_connect')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('login')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('pasv')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('fput')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('delete')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('mkdir')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('chdir')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('chdir')->will($this->returnValue(TRUE));
-        $functions->expects($this->any())->method('rmdir')->will($this->returnValue(TRUE));
+        $functions = $this->getMock(
+            'FtpLib\Functions',
+            array(
+                'connect', 'ssl_connect', 'login', 'pasv', 'fput', 'delete',
+                'mkdir', 'chdir', 'fget', 'rmdir', 'nlist', 'size'
+            )
+        );
+
+        $functions->expects($this->any())->method('connect')->will($this->returnValue(true));
+        $functions->expects($this->any())->method('ssl_connect')->will($this->returnValue(true));
+        $functions->expects($this->any())->method('login')->will($this->returnValue(true));
+        $functions->expects($this->any())->method('pasv')->will($this->returnValue(true));
+        $functions->expects($this->any())->method('fput')->will($this->returnValue(true));
+        $functions->expects($this->any())->method('delete')->will($this->returnValue(true));
+        $functions->expects($this->any())->method('mkdir')->will($this->returnValue(true));
+        $functions->expects($this->any())->method('chdir')->will($this->returnValue(true));
+        $functions->expects($this->any())->method('chdir')->will($this->returnValue(true));
+        $functions->expects($this->any())->method('rmdir')->will($this->returnValue(true));
         $functions->expects($this->any())->method('size')->will($this->returnValue(1));
-        $functions->expects($this->any())->method('nlist')->will($this->returnCallback(function () {
-            return array('filename1', 'filename2');
-        }));
-        $functions->expects($this->any())->method('fget')->will($this->returnCallback(function ($ftp_stream, $handle, $remote_file, $mode) {
-            $tempHandle = fopen('php://temp', 'w+');
-            fwrite($tempHandle, 'foo', strlen('foo'));
-            rewind($tempHandle);
-            $handle = $tempHandle;
-            // AFAIK this doesn't work. PHP clones the parameters and cannot use references
-            return TRUE;
-        }));
+
+        $functions->expects($this->any())->method('nlist')->will(
+            $this->returnCallback(
+                function () {
+                    return array('filename1', 'filename2');
+                }
+            )
+        );
+
+        $functions->expects($this->any())->method('fget')->will(
+            $this->returnCallback(
+                function ($ftp_stream, $handle, $remote_file, $mode) {
+                    $tempHandle = fopen('php://temp', 'w+');
+                    fwrite($tempHandle, 'foo', strlen('foo'));
+                    rewind($tempHandle);
+                    $handle = $tempHandle;
+                    // AFAIK this doesn't work. PHP clones the parameters and cannot use references
+                    return true;
+                }
+            )
+        );
 
         return $functions;
     }
 
     public function testPutAFileFromPath()
     {
-        $file = $this->ftp->putFileFromPath(__DIR__ . '/fixtures/foo');
+        $file = $this->ftp->putFileFromPath(__DIR__ . '/../fixtures/foo');
         $this->assertInstanceOf('FtpLib\File', $file);
         $this->assertEquals('foo', $file->getName(), 'Check file name');
         $this->assertEquals("foo", $file->getContent(), 'Check file content');
@@ -67,7 +82,7 @@ class FtpTest extends \PHPUnit_Framework_TestCase
     {
         $this->ftp->mkdir("/directory");
         $this->ftp->chdir("/directory");
-        $this->ftp->putFileFromPath(__DIR__ . '/fixtures/foo');
+        $this->ftp->putFileFromPath(__DIR__ . '/../fixtures/foo');
 
         $file = $this->ftp->getFile('foo');
         $this->assertEquals('foo', $file->getName(), 'Check file name');
@@ -90,10 +105,12 @@ class FtpTest extends \PHPUnit_Framework_TestCase
         $this->ftp->putFileFromString('filename2', 'bla2, bla2, bla2');
 
         $files = array();
-        $this->ftp->getFiles(function (File $file) use (&$files) {
-            $this->assertInstanceOf('FtpLib\File', $file);
-            $files[] = $file;
-        });
+        $this->ftp->getFiles(
+            function (File $file) use (&$files) {
+                $this->assertInstanceOf('FtpLib\File', $file);
+                $files[] = $file;
+            }
+        );
 
         $this->assertEquals('filename1', $files[0]->getName(), 'Check file name1');
         //$this->assertEquals('bla1, bla1, bla1', $files[0]->getContent(), 'Check file content');
@@ -110,7 +127,7 @@ class FtpTest extends \PHPUnit_Framework_TestCase
         $ftp = new Ftp("ftphost", "username", "password");
         $ftp->setFtpWrapper($this->getMockFunctions());
         $ftp->connectSSL();
-        $file = $ftp->putFileFromPath(__DIR__ . '/fixtures/foo');
+        $file = $ftp->putFileFromPath(__DIR__ . '/../fixtures/foo');
         $this->assertInstanceOf('FtpLib\File', $file);
         $file->delete();
     }

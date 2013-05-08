@@ -3,9 +3,11 @@ namespace FtpLib;
 
 class Ftp
 {
-    private $host, $user, $pass;
-    private $isConnected = FALSE;
-    private $ftp = NULL;
+    private $host;
+    private $user;
+    private $pass;
+    private $isConnected = false;
+    private $ftp = null;
     private $conn;
 
     public function __construct($host, $user, $pass)
@@ -13,7 +15,7 @@ class Ftp
         $this->host = $host;
         $this->user = $user;
         $this->pass = $pass;
-        $this->ftp = new Functions;
+        $this->ftp = new Functions();
     }
 
     public function setFtpWrapper($ftp)
@@ -25,6 +27,7 @@ class Ftp
     {
         $this->conn = $this->ftp->connect($this->host);
         $this->login();
+
         return $this;
     }
 
@@ -39,12 +42,14 @@ class Ftp
     {
         $this->conn = $this->ftp->ssl_connect($this->host);
         $this->login();
+
         return $this;
     }
 
     public function setPasv()
     {
-        $this->ftp->pasv($this->conn, TRUE);
+        $this->ftp->pasv($this->conn, true);
+
         return $this;
     }
 
@@ -53,34 +58,37 @@ class Ftp
         $tempHandle = fopen('php://temp', 'w');
         fwrite($tempHandle, $content, strlen($content));
         rewind($tempHandle);
+
         if ($this->ftp->fput($this->conn, $remoteFileName, $tempHandle, FTP_BINARY)) {
             return new File($this, $remoteFileName, $content);
-        } else {
-            throw new Exception("Error when put the remote file '{$remoteFileName}'");
         }
+
+        throw new Exception("Error when put the remote file '{$remoteFileName}'");
     }
 
     public function putFileFromPath($localPath)
     {
         $remoteFile = basename($localPath);
         $fp = fopen($localPath, 'r');
+
         if ($this->ftp->fput($this->conn, $remoteFile, $fp, FTP_BINARY)) {
             rewind($fp);
             return new File($this, $remoteFile, stream_get_contents($fp));
-        } else {
-            throw new Exception("Error when put the remote file From Path'{$localPath}'");
         }
+
+        throw new Exception("Error when put the remote file From Path'{$localPath}'");
     }
 
     public function getFile($remoteFile)
     {
         $tempHandle = fopen('php://temp', 'r+');
+
         if ($this->ftp->fget($this->conn, $tempHandle, $remoteFile, FTP_BINARY)) {
             rewind($tempHandle);
             return new File($this, $remoteFile, stream_get_contents($tempHandle));
-        } else {
-            throw new Exception("Error opening the remote file '{$remoteFile}'");
         }
+
+        throw new Exception("Error opening the remote file '{$remoteFile}'");
     }
 
     public function deleteFile($remoteFile)
@@ -88,6 +96,7 @@ class Ftp
         if (!$this->ftp->delete($this->conn, $remoteFile)) {
             throw new Exception("Error deleteting the remote file '{$remoteFile}'");
         }
+
         return $this;
     }
 
@@ -96,6 +105,7 @@ class Ftp
         if (!$this->ftp->chdir($this->conn, $directory)) {
             throw new Exception("Error changing the directory '{$directory}'");
         }
+
         return $this;
     }
 
@@ -104,6 +114,7 @@ class Ftp
         if (!$this->ftp->mkdir($this->conn, $directory)) {
             throw new Exception("Error creating the directory '{$directory}'");
         }
+
         return $this;
     }
 
@@ -112,6 +123,7 @@ class Ftp
         if (!$this->ftp->rmdir($this->conn, $directory)) {
             throw new Exception("Error deleting the directory '{$directory}'");
         }
+
         return $this;
     }
 
@@ -123,11 +135,13 @@ class Ftp
     public function getFiles(\Closure $closure, $directory = '.')
     {
         $files = $this->listFiles($directory);
+
         foreach ($files as $fileName) {
             if ($this->ftp->size($this->conn, $fileName) != '-1') {
                 $closure($this->getFile($fileName));
             }
         }
+
         return $this;
     }
 }
