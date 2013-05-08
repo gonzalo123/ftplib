@@ -20,7 +20,7 @@ class FtpTest extends \PHPUnit_Framework_TestCase
             'FtpLib\Functions',
             array(
                 'connect', 'ssl_connect', 'login', 'pasv', 'fput', 'delete',
-                'mkdir', 'chdir', 'fget', 'rmdir', 'nlist', 'size'
+                'mkdir', 'chdir', 'fget', 'rmdir', 'nlist', 'size', 'close'
             )
         );
 
@@ -34,6 +34,7 @@ class FtpTest extends \PHPUnit_Framework_TestCase
         $functions->expects($this->any())->method('chdir')->will($this->returnValue(true));
         $functions->expects($this->any())->method('chdir')->will($this->returnValue(true));
         $functions->expects($this->any())->method('rmdir')->will($this->returnValue(true));
+        $functions->expects($this->any())->method('close')->will($this->returnValue(true));
         $functions->expects($this->any())->method('size')->will($this->returnValue(1));
 
         $functions->expects($this->any())->method('nlist')->will(
