@@ -6,7 +6,6 @@ class Ftp
     private $host;
     private $user;
     private $pass;
-    private $isConnected = false;
     private $ftp = null;
     private $conn;
 
