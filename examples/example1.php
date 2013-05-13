@@ -1,8 +1,8 @@
 <?php
 include __DIR__ . "/../vendor/autoload.php";
 
-use FtpLib\Ftp,
-    FtpLib\File;
+use FtpLib\File;
+use FtpLib\Ftp;
 
 list($host, $user, $pass) = include __DIR__ . "/credentials.php";
 
@@ -26,13 +26,15 @@ $ftp->rmdir('directory');
 $ftp->putFileFromString('file1', 'bla, bla, bla');
 $ftp->putFileFromString('file2', 'bla, bla, bla');
 
-$ftp->getFiles(function (File $file) use ($ftp) {
-    switch($file->getName()) {
-        case 'file1':
-            $file->delete();
-            break;
-        case 'file2':
-            $ftp->mkdir('backup')->chdir('backup')->putFileFromString($file->getName(), $file->getContent());
-            break;
+$ftp->getFiles(
+    function (File $file) use ($ftp) {
+        switch($file->getName()) {
+            case 'file1':
+                $file->delete();
+                break;
+            case 'file2':
+                $ftp->mkdir('backup')->chdir('backup')->putFileFromString($file->getName(), $file->getContent());
+                break;
+        }
     }
-});
+);
